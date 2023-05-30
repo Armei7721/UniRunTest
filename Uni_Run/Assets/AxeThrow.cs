@@ -22,7 +22,7 @@ public class AxeThrow : MonoBehaviour
             Blink.isAxe = true;
             Blink.Axe();
             Debug.Log(Blink.isAxe);
-            Destroy(other);
+            Destroy(other.gameObject,3);
         }
     }
 
