@@ -56,19 +56,13 @@ public class GameManager : MonoBehaviour {
         gameoverUI.SetActive(true);
         
     }
-    //버튼 연동 메서드
-    public void Restart()
-    {   //게임 재시작 기능
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-    
-    public void Exit()
+
+    public void OnClick()
     {
         Application.Quit();
-
     }
-    public void TimeState(int time)
+    public void Restart()
     {
-        Time.timeScale = time;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
