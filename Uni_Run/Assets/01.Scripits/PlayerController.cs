@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     public float boostedSpeed = 10f; // 아이템을 먹었을 때의 증가된 속도
 
     private bool isBoosted; // 부스터 아이템을 먹었는지 여부 확인
-    private float boostDuration = 2f; // 속도 증가 지속 시간
+    private float boostDuration = 10f; // 속도 증가 지속 시간
     private float boostTimer; // 속도 증가 타이머
 
     private bool isIY; // 무적 아이템을 먹었는지 여부 확인

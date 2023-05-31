@@ -4,6 +4,11 @@ using UnityEngine;
 public class ScrollingObject : MonoBehaviour
 {
     public static float speed = 10f;
+
+    private void Start()
+    {
+
+    }
     void Update()
     {
         //게임오버가 아니라면

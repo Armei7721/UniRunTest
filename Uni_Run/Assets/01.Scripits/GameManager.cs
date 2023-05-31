@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour {
         
     }
 
-    public void OnClick()
+    public void Exit()
     {
         Application.Quit();
     }
