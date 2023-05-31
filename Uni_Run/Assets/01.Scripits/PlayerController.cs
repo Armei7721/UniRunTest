@@ -29,8 +29,15 @@ public class PlayerController : MonoBehaviour
     public float t;
     public float duration =10;
     // Start is called before the first frame update
+    public BoxCollider2D box;
+    public CapsuleCollider2D capsule;
+
+    public float mtime = 0f;
+    public bool iE = false;
     void Start()
     {
+        box = GetComponent<BoxCollider2D>();
+        capsule = GetComponent<CapsuleCollider2D>();
         // 게임 오브젝트로부터 사용할 컴포넌트들을 가져와 변수에 할당
         playerRigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
@@ -44,10 +51,12 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        mtime += Time.deltaTime;
         Jump();
         Slide();
         Booster();
         Invincibility();
+        transparency();
     }
     private void Booster()
     {
@@ -133,10 +142,15 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             animator.SetBool("Slide", true);
+            box.enabled = true;
+            capsule.enabled = false;
+                
         }
         else if (Input.GetMouseButtonUp(1))
         {
             animator.SetBool("Slide", false);
+            box.enabled = false;
+            capsule.enabled = true;
         }
     }
     private void Recovery()
@@ -163,7 +177,20 @@ public class PlayerController : MonoBehaviour
         //게임 매니저의 게임오버 처리 실행
         GameManager.instance.OnPlayerDead();
     }
-
+    private void transparency()
+    {
+        if (iE == true)
+        {
+            mtime += Time.deltaTime;
+            if (mtime >= 3f)
+            {
+                iE = false;
+                mtime = 0f;
+                Debug.Log("확인");
+                // 무적 상태 해제 후 필요한 처리 추가하기
+            }
+        }
+    }
     private void OnTriggerEnter2D(Collider2D other)
     {
         //트리거 콜라이더를 가진 장애물과의 충돌을 감지
@@ -177,21 +204,24 @@ public class PlayerController : MonoBehaviour
             other.gameObject.SetActive(false);
         }
         else if (other.tag == "Trap" && !isDead)
-        {
-            if (hp > 0 && isIY == false)
+        {   
+            if (hp > 0 && isIY == false && iE == false)
             {
+                iE = true;
+                mtime = 0f;
                 hp -= 1;
                 Hp[hp].SetActive(false);
                 if (hp == 0)
                 {
                     Die();
                 }
+                
             }
             else if (isIY == true)
             {
                 other.gameObject.SetActive(false);
             }
-
+            
         }
         else if (other.tag == "Score" && !isDead)
         {

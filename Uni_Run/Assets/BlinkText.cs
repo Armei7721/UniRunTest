@@ -16,11 +16,8 @@ public class BlinkText : MonoBehaviour
     public float blinkIntervals = 3f;
 
     private float timer;
-    private int random = 0;
-    private int specificIndex;
     void Start()
-    {
-        
+    { 
     }
     private void Update()
     {
