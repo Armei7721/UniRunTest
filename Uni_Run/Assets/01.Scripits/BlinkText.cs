@@ -36,14 +36,16 @@ public class BlinkText : MonoBehaviour
                 {
                     warningObjects[i].SetActive(true);
                     isActivated = true;
-                    
                     timer = 0f; // 타이머 초기화
+            
                 }
                 else
                 {
                     warningObjects[i].SetActive(false);
                 }
+
             }
+
         }
 
         if (isActivated)
@@ -52,8 +54,9 @@ public class BlinkText : MonoBehaviour
             if (timer >= activationTime)
             {
                 for (int i = 0; i < warningObjects.Length; i++)
-                {
+                {   
                     warningObjects[i].SetActive(false);
+                    transform.position= new Vector3(-22f, warningObjects[i].transform.position.y, 0f);
                     InstantiateAxe(warningObjects[i].transform.position);
                     timer = 0;
                 }
