@@ -1,56 +1,72 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+// 발판을 생성하고 주기적으로 재배치하는 스크립트
 public class Test : MonoBehaviour
 {
-    private bool isScalingUp = false;
-    private bool isScalingDown = false;
-    private float scaleTimer = 0f;
-    private float scaleDuration = 1f;
-    private Vector3 initialScale;
+    public GameObject platformPrefab; // 생성할 발판의 원본 프리팹
+    public int count = 3; // 생성할 발판의 개수
 
-    private void Update()
+    public float timeBetSpawnMin = 1.25f; // 다음 배치까지의 시간 간격 최솟값
+    public float timeBetSpawnMax = 2.25f; // 다음 배치까지의 시간 간격 최댓값
+    private float timeBetSpawn; // 다음 배치까지의 시간 간격
+
+    private float xPos = 30f; // 배치할 위치의 x 값
+
+    private GameObject[] platforms; // 미리 생성한 발판들
+    private int currentIndex = 0; // 사용할 현재 순번의 발판
+
+    private Vector2 poolPosition = new Vector2(0, -25); // 초반에 생성된 발판들을 화면 밖에 숨겨둘 위치
+    private float lastSpawnTime; // 마지막 배치 시점
+
+
+    void Start()
     {
-        Invincibility();
-        if (isScalingUp == true)
-        {
-            scaleTimer += Time.deltaTime;
-            float t = scaleTimer / scaleDuration;
-            transform.localScale = Vector3.Lerp(initialScale, new Vector3(3f, 3f, 1f), t);
-
-            //Debug.Log(scaleTimer);
-            ////Debug.Log(scaleDuration);
-            //if (scaleTimer >= scaleDuration)
-            //{
-            //    isScalingUp = false;
-            //    isScalingDown = true;
-            //    scaleTimer = 0f;
-            //    initialScale = transform.localScale;
-             
-            //}
+        // 변수들을 초기화하고 사용할 발판들을 미리 생성
+        platforms = new GameObject[count];
+        //Count만큼의 고간을 가지는 새로운 발판 배열 생성
+        for (int i = 0; i < count; i++)
+        {   //platformPrefab을 원본으로 새 발판을 poolPosition 위치에 복제 생성
+            //생성된 발판을 platform 배열에 할당
+            platforms[i] = Instantiate(platformPrefab, poolPosition, Quaternion.identity);
         }
-        else if (isScalingDown == true)
-        {
-            scaleTimer += Time.deltaTime;
-            float t = scaleTimer / scaleDuration;
-            transform.localScale = Vector3.Lerp(initialScale, new Vector3(1f, 1f, 1f), t);
-
-            if (scaleTimer >= scaleDuration)
-            {
-                isScalingDown = false;
-                isScalingUp = true;
-                initialScale = transform.localScale;
-            }
-        }
+        // 마지막 배치 시점 초기화
+        lastSpawnTime = 0f;
+        // 다음번 배치까지의 시간 간격을 0을 초기화
+        timeBetSpawn = 0f;
     }
 
-    private void Invincibility()
+    void Update()
     {
-        // 이전 코드 내용 유지
+        //게임오버 상태에서는 동작하지 않음
+        if (GameManager.instance.isGameover)
+        {
+            return;
+        }
+        //마지막 배치 시점에서 timeBetSpawn 이상 시간이 흘렀다면
+        if (Time.time >= lastSpawnTime + timeBetSpawn)
+        {
+            //기록된 마지막 배치 시점을 현재 시점으로 갱신
+            lastSpawnTime = Time.time;
 
-        isScalingUp = true;
-        scaleTimer = 0f;
-        initialScale = transform.localScale;
+            // 다음 배치까지의 시간 간격을 timeBetSpawnMin, timeBetSpawnMax 사이에서 랜덤 설정
+            timeBetSpawn = Random.Range(timeBetSpawnMin, timeBetSpawnMax);
+
+            //사용할 현재 순번의 발판 게임 오브젝트를 비활성화하고 즉시 다시 활성화
+            // 이때 바판의 Platform 컴포넌트의 OnEnable 메서드가 실행됨
+            platforms[currentIndex].SetActive(false);
+            platforms[currentIndex].SetActive(true);
+
+            //현제 순변의 발판을 화면 오른쪽에 재배치
+            platforms[currentIndex].transform.position = new Vector2(xPos, 2.3f);
+            //순번넘기기
+            currentIndex++;
+
+            //마지막 순번에 도달했다면 순번을 리셋
+            if (currentIndex >= count)
+            {
+                currentIndex = 0;
+            }
+
+        }
     }
 }

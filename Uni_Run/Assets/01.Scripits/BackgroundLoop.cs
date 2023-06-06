@@ -9,7 +9,7 @@ public class BackgroundLoop : MonoBehaviour
     void Awake()
     {
         BoxCollider2D backgroundCollider = GetComponent<BoxCollider2D>();
-        width = backgroundCollider.size.x;
+        width = backgroundCollider.size.x*0.45f;
     }
 
     // Update is called once per frame

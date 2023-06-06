@@ -1,74 +1,62 @@
 ﻿using UnityEngine;
 
 // 발판을 생성하고 주기적으로 재배치하는 스크립트
-public class PlatformSpawner : MonoBehaviour {
-    public GameObject platformPrefab; // 생성할 발판의 원본 프리팹
-    public int count = 3; // 생성할 발판의 개수
+public class PlatformSpawner : MonoBehaviour
+{
+    public GameObject[] childObjects; // 자식 오브젝트를 담을 배열
+    public int count; // 생성할 발판의 개수
 
-    public float timeBetSpawnMin = 1.25f; // 다음 배치까지의 시간 간격 최솟값
-    public float timeBetSpawnMax = 2.25f; // 다음 배치까지의 시간 간격 최댓값
+    public float timeBetSpawnMin = 1.25f;
+    public float timeBetSpawnMax = 2.25f;
     private float timeBetSpawn; // 다음 배치까지의 시간 간격
-
-    public float yMin = -3.5f; // 배치할 위치의 최소 y값
-    public float yMax = 1.5f; // 배치할 위치의 최대 y값
-    private float xPos = 30f; // 배치할 위치의 x 값
+    private float xPos = 22f; // 발판을 배치할 x 좌표
 
     private GameObject[] platforms; // 미리 생성한 발판들
     private int currentIndex = 0; // 사용할 현재 순번의 발판
 
-    private Vector2 poolPosition = new Vector2(0, -25); // 초반에 생성된 발판들을 화면 밖에 숨겨둘 위치
-    private float lastSpawnTime; // 마지막 배치 시점
+    private Vector2 poolPosition = new Vector2(0, -25); // 초기 위치에 숨겨둘 발판들의 위치
+    private float lastSpawnTime; // 마지막 발판 배치 시점
 
-
-    void Start() {
-        // 변수들을 초기화하고 사용할 발판들을 미리 생성
-        platforms = new GameObject[count];
-        //Count만큼의 고간을 가지는 새로운 발판 배열 생성
-        for(int i = 0;i < count; i++)
-        {   //platformPrefab을 원본으로 새 발판을 poolPosition 위치에 복제 생성
-            //생성된 발판을 platform 배열에 할당
-            platforms[i] = Instantiate(platformPrefab, poolPosition, Quaternion.identity);
+    void Start()
+    {
+        childObjects = new GameObject[transform.childCount];
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            childObjects[i] = transform.GetChild(i).gameObject;
         }
-        // 마지막 배치 시점 초기화
+
+        count = childObjects.Length;
+        platforms = new GameObject[count]; // platforms 배열 초기화
+
+        for (int i = 0; i < count; i++)
+        {
+            platforms[i] = Instantiate(childObjects[i], poolPosition, Quaternion.identity);
+            platforms[i].SetActive(false); // 초기에 발판들을 비활성화 상태로 설정
+        }
+
         lastSpawnTime = 0f;
-        // 다음번 배치까지의 시간 간격을 0을 초기화
-        timeBetSpawn = 0f;
+        timeBetSpawn = Random.Range(timeBetSpawnMin, timeBetSpawnMax);
     }
 
-    void Update() {
-        //게임오버 상태에서는 동작하지 않음
-        if(GameManager.instance.isGameover)
+    void Update()
+    {
+        // 게임 오버 상태인 경우 업데이트를 종료합니다.
+        if (GameManager.instance.isGameover)
         {
             return;
         }
-        //마지막 배치 시점에서 timeBetSpawn 이상 시간이 흘렀다면
-        if(Time.time >= lastSpawnTime +timeBetSpawn)
+
+        if (Time.time >= lastSpawnTime + timeBetSpawn)
         {
-            //기록된 마지막 배치 시점을 현재 시점으로 갱신
             lastSpawnTime = Time.time;
-
-            // 다음 배치까지으 ㅣ시간 간격을 timeBetSpawnMin, timeBetSpawnMax 사이에서 랜덤 설정
             timeBetSpawn = Random.Range(timeBetSpawnMin, timeBetSpawnMax);
-            
-            //배치할 위치의 높이를 yMin과 yMax 사이에서 랜덤 설정
-            float yPos = Random.Range(yMin, yMax);
-            
-            //사용할 현재 순번의 발판 게임 오브젝트를 비활성화하고 즉시 다시 활성화
-            // 이때 바판의 Platform 컴포넌트의 OnEnable 메서드가 실행됨
-            platforms[currentIndex].SetActive(false);
-            platforms[currentIndex].SetActive(true);
-           
-            //현제 순변의 발판을 화면 오른쪽에 재배치
-            platforms[currentIndex].transform.position = new Vector2(xPos, yPos);
-            //순번넘기기
-            currentIndex++;
 
-            //마지막 순번에 도달했다면 순번을 리셋
-            if(currentIndex >=count)
-            {
-                currentIndex = 0;
-            }
-            
+            platforms[currentIndex].SetActive(false);
+
+            int randomIndex = Random.Range(0, childObjects.Length);
+            currentIndex = randomIndex;
+            childObjects[currentIndex].SetActive(true);
+            childObjects[currentIndex].transform.position = new Vector2(xPos, -3.9f);
         }
     }
 }
