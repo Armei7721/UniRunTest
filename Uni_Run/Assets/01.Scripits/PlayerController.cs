@@ -29,14 +29,13 @@ public class PlayerController : MonoBehaviour
     private float t;
     private float duration =10;
     // Start is called before the first frame update
-    private BoxCollider2D box;
     private CapsuleCollider2D capsule;
 
     private float mtime = 0f;
     private bool iE = false;
     void Start()
     {
-        box = GetComponent<BoxCollider2D>();
+       
         capsule = GetComponent<CapsuleCollider2D>();
         // 게임 오브젝트로부터 사용할 컴포넌트들을 가져와 변수에 할당
         playerRigidbody = GetComponent<Rigidbody2D>();
@@ -143,14 +142,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             animator.SetBool("Slide", true);
-            box.enabled = true;
             capsule.enabled = false;
                 
         }
         else if (Input.GetMouseButtonUp(1))
         {
             animator.SetBool("Slide", false);
-            box.enabled = false;
             capsule.enabled = true;
         }
     }

@@ -21,7 +21,7 @@ public class AxeThrow : MonoBehaviour
         {
             Blink.isAxe = true;
             Blink.Axe();
-            Destroy(other.gameObject,3);
+            //Destroy(other.gameObject,3);
         }
     }
 

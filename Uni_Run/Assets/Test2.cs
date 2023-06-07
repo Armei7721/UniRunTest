@@ -3,8 +3,8 @@ using UnityEngine;
 // 발판을 생성하고 주기적으로 재배치하는 스크립트
 public class Test2 : MonoBehaviour
 {
+    public GameObject[] prefabs; // 발판 프리팹들을 참조할 배열
 
-    public GameObject[] childObjects; // 자식 오브젝트를 담을 배열
     public int count = 3; // 생성할 발판의 개수
 
     public float timeBetSpawnMin = 1.25f;
@@ -21,15 +21,12 @@ public class Test2 : MonoBehaviour
     void Start()
     {
         platforms = new GameObject[count];
-        childObjects = new GameObject[transform.childCount];
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            childObjects[i] = transform.GetChild(i).gameObject;
-        }
-        //변수들을 초기화하고 사용할 발판들을 미리 생성합니다.
+
+        // 변수들을 초기화하고 사용할 발판들을 미리 생성합니다.
         for (int i = 0; i < count; i++)
         {
-            platforms[i] = Instantiate(childObjects[i], poolPosition, Quaternion.identity);
+            GameObject prefab = prefabs[i % prefabs.Length]; // 프리팹들을 루프하며 참조합니다.
+            platforms[i] = Instantiate(prefab, poolPosition, Quaternion.identity);
         }
 
         lastSpawnTime = 0f;
@@ -61,6 +58,5 @@ public class Test2 : MonoBehaviour
                 currentIndex = 0;
             }
         }
-
     }
 }

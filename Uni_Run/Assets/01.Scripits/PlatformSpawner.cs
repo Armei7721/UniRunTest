@@ -34,7 +34,7 @@ public class PlatformSpawner : MonoBehaviour
         }
 
         lastSpawnTime = 0f;
-        timeBetSpawn = 2.5f;
+        timeBetSpawn = 3f;
     }
 
     void Update()
@@ -48,7 +48,7 @@ public class PlatformSpawner : MonoBehaviour
         if (Time.time >= lastSpawnTime + timeBetSpawn)
         {
             lastSpawnTime = Time.time;
-            timeBetSpawn = Random.Range(timeBetSpawnMin, timeBetSpawnMax);
+           
 
             platforms[currentIndex].SetActive(false);
 
