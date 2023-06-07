@@ -13,11 +13,13 @@ public class BlinkText : MonoBehaviour
     public GameObject TWAxe;
     public bool isAxe= false;
 
+    public int randomIndex;
     public float blinkIntervals = 3f;
     public GameObject axePrefab; // 도끼의 프리팹
     private float timer;
     void Start()
-    { 
+    {
+        randomIndex = Random.Range(0, warningObjects.Length);
     }
     private void Update()
     {
@@ -26,26 +28,23 @@ public class BlinkText : MonoBehaviour
 
 
     public void Axe()
-    {   //isAxe true이고 isActivated가 false 일대
+    {
         if (isAxe && !isActivated)
-        {   // randomindex에 random.Range(0,warningObjects.Length)사이값을 대입
-            int randomIndex = Random.Range(0, warningObjects.Length);
+        {
+            
             for (int i = 0; i < warningObjects.Length; i++)
             {
                 if (i == randomIndex)
                 {
                     warningObjects[i].SetActive(true);
                     isActivated = true;
-                    timer = 0f; // 타이머 초기화
-            
+                    timer = 0f;
                 }
                 else
                 {
                     warningObjects[i].SetActive(false);
                 }
-
             }
-
         }
 
         if (isActivated)
@@ -56,8 +55,11 @@ public class BlinkText : MonoBehaviour
                 for (int i = 0; i < warningObjects.Length; i++)
                 {   
                     warningObjects[i].SetActive(false);
-                    transform.position= new Vector3(-22f, warningObjects[i].transform.position.y, 0f);
-                    InstantiateAxe(warningObjects[i].transform.position);
+                    warningObjects[i].transform.position = new Vector3(-22f, warningObjects[i].transform.position.y, 0f);
+                    if (i == randomIndex)
+                    {
+                        InstantiateAxe(warningObjects[i].transform.position);
+                    }
                     timer = 0;
                 }
                 isActivated = false;
@@ -72,7 +74,7 @@ public class BlinkText : MonoBehaviour
         Rigidbody2D axeRigidbody = axe.GetComponent<Rigidbody2D>();
 
         // 도끼에 원하는 힘과 방향을 주어 날리기
-        Vector3 axeForce = Vector3.right * 10f; // 예시로 앞쪽으로 힘을 가함
+        Vector3 axeForce = Vector3.right * 10f; // 예시로 오른쪽 방향으로 힘을 가함
         axeRigidbody.AddForce(axeForce, ForceMode2D.Impulse);
     }
 }

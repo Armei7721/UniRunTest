@@ -4,7 +4,7 @@
 public class PlatformSpawner : MonoBehaviour
 {
     public GameObject[] childObjects; // 자식 오브젝트를 담을 배열
-    public int count; // 생성할 발판의 개수
+    private int count; // 생성할 발판의 개수
 
     public float timeBetSpawnMin = 1.25f;
     public float timeBetSpawnMax = 2.25f;
@@ -53,10 +53,10 @@ public class PlatformSpawner : MonoBehaviour
 
             platforms[currentIndex].SetActive(false);
 
-            int randomIndex = Random.Range(0, childObjects.Length);
+            int randomIndex = Random.Range(1, childObjects.Length);
             currentIndex = randomIndex;
             childObjects[currentIndex].SetActive(true);
-            childObjects[currentIndex].transform.position = new Vector2(xPos, -3.9f);
+            childObjects[currentIndex].transform.position = new Vector2(xPos, -3.7f);
         }
     }
 }
