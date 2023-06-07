@@ -26,14 +26,14 @@ public class PlayerController : MonoBehaviour
     private Animator animator; // 사용할 애니메이터 컴포넌트
     private AudioSource playerAudio; // 사용할 오디오 소스 컴포넌트
 
-    public float t;
-    public float duration =10;
+    private float t;
+    private float duration =10;
     // Start is called before the first frame update
-    public BoxCollider2D box;
-    public CapsuleCollider2D capsule;
+    private BoxCollider2D box;
+    private CapsuleCollider2D capsule;
 
-    public float mtime = 0f;
-    public bool iE = false;
+    private float mtime = 0f;
+    private bool iE = false;
     void Start()
     {
         box = GetComponent<BoxCollider2D>();
@@ -83,13 +83,13 @@ public class PlayerController : MonoBehaviour
             {   
                 if (t < 10f)
                 {   //t가 Time.deltaTime/duration 만큼 커진다.
-                    t += Time.deltaTime / duration;
+                    t += Time.deltaTime*4 / duration;
                     //t가 2.5f보다 작으면 true;
-                    if (t < 1.5f)
-                    {   // 트랜스폼 로컬 스케일의 크기를 Lerp함수를 사용해서 점진적으로 크키가 1의 크기에서 3의 크기까지 보간 비율(t*0.4f)로 커진다.
-                        transform.localScale = Vector3.Lerp(new Vector3(1f, 1f, 1f), new Vector3(3f, 3f, 1f), t * 0.5f);
+                    if (t < 2.5f)
+                    {   // 트랜스폼 로컬 스케일의 크기를 Lerp함수를 사용해서 점진적으로 크키가 1의 크기에서 2의 크기까지 보간 비율(t*0.4f)로 커진다.
+                        transform.localScale = Vector3.Lerp(new Vector3(1f, 1f, 1f), new Vector3(2f, 2f, 1f), t );
                     }
-                    else if (t >= 9.5f)
+                    else if (t >= 7.5f)
                     {
                         //t가 4.5f보다 커지면 최종 플레이어의 크기는 (1f,1f,1f)가 된다.
                         transform.localScale = new Vector3(1f, 1f, 1f);
@@ -98,6 +98,7 @@ public class PlayerController : MonoBehaviour
                         isIY = false;
                         MZTimer = 0;
                         t = 0f;
+                        iE = true;
                     }
                 
                 }
@@ -186,7 +187,6 @@ public class PlayerController : MonoBehaviour
             {
                 iE = false;
                 mtime = 0f;
-                Debug.Log("확인");
                 // 무적 상태 해제 후 필요한 처리 추가하기
             }
         }
@@ -227,6 +227,12 @@ public class PlayerController : MonoBehaviour
         {
             GameManager.instance.AddScore(100);
             other.gameObject.SetActive(false);
+        }
+        else if (other.tag =="Mushroom" && !isDead)
+        {
+            playerRigidbody.velocity = Vector2.zero; // 플레이어의 현재 속도를 제로로 설정
+            playerRigidbody.AddForce(new Vector2(0, jumpForce*1.2f)); // 점프 힘을 주기 전에 플레이어의 속도를 복구하지 않고 힘을 주는 부분
+
         }
         else if (other.tag == "Booster" && !isDead)
         {

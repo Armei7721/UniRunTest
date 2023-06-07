@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 
-// 발판을 생성하고 주기적으로 재배치하는 스크립트
 public class PlatformSpawner : MonoBehaviour
 {
     public GameObject[] childObjects; // 자식 오브젝트를 담을 배열
@@ -35,7 +34,7 @@ public class PlatformSpawner : MonoBehaviour
         }
 
         lastSpawnTime = 0f;
-        timeBetSpawn = Random.Range(timeBetSpawnMin, timeBetSpawnMax);
+        timeBetSpawn = 2.5f;
     }
 
     void Update()
@@ -53,10 +52,24 @@ public class PlatformSpawner : MonoBehaviour
 
             platforms[currentIndex].SetActive(false);
 
-            int randomIndex = Random.Range(1, childObjects.Length);
+            int randomIndex = Random.Range(0, childObjects.Length);
             currentIndex = randomIndex;
             childObjects[currentIndex].SetActive(true);
             childObjects[currentIndex].transform.position = new Vector2(xPos, -3.7f);
+        }
+
+        // 발판이 카메라를 벗어났는지 확인하고 재배치합니다.
+        for (int i = 0; i < count; i++)
+        {
+            if (platforms[i].activeSelf && platforms[i].transform.position.x < Camera.main.transform.position.x - 15f)
+            {
+                platforms[i].SetActive(false);
+
+                int randomIndex = Random.Range(0, childObjects.Length);
+                currentIndex = randomIndex;
+                childObjects[currentIndex].SetActive(true);
+                childObjects[currentIndex].transform.position = new Vector2(xPos, -3.7f);
+            }
         }
     }
 }
