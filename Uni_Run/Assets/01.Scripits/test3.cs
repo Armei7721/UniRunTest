@@ -41,5 +41,6 @@ public class test3 : MonoBehaviour
         float endX = worldMaxPoint.x;
 
         //Debug.Log("콜라이더 끝 부분의 x 값: " + endX);
+        //Debug.Log("콜라이더 끝 부분의 x 값: " + endX);
     }
 }

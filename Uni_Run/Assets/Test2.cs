@@ -38,23 +38,11 @@ public class Test2 : MonoBehaviour
             return;
         }
 
-        //if (Time.time >= lastSpawnTime + timeBetSpawn)
-        //{
-        //    lastSpawnTime = Time.time;
-        //    platforms[currentIndex].SetActive(false);
-
-        //    int randomIndex = Random.Range(0, count);
-        //    currentIndex = randomIndex;
-        //    GameObject newPlatform = Instantiate(prefabs[currentIndex], new Vector2(xPos, -3.7f), Quaternion.identity);
-        //    platforms[currentIndex] = newPlatform;
-
-        //    xPos += 10f; // 발판 간격을 조정합니다.
-        //}
 
         for (int i = 0; i < count; i++)
         {
             Debug.Log(platforms[i].transform.position.x);
-            if (platforms[i].activeSelf && platforms[i].transform.position.x < Camera.main.transform.position.x - 23.5f)
+            if (platforms[i].activeSelf && platforms[i].transform.position.x < Camera.main.transform.position.x - 32.5f)
             {
                 platforms[i].SetActive(false);
 

@@ -50,12 +50,13 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        mtime += Time.deltaTime;
+        
         Jump();
         Slide();
         Booster();
         Invincibility();
         transparency();
+        mtime += Time.deltaTime;
     }
     private void Booster()
     {
