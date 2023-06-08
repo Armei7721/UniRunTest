@@ -45,30 +45,32 @@ public class PlatformSpawner : MonoBehaviour
             return;
         }
 
-        if (Time.time >= lastSpawnTime + timeBetSpawn)
-        {
-            lastSpawnTime = Time.time;
-           
+        //if (Time.time >= lastSpawnTime + timeBetSpawn)
+        //{
+        //    lastSpawnTime = Time.time;
 
-            platforms[currentIndex].SetActive(false);
-
-            int randomIndex = Random.Range(0, childObjects.Length);
-            currentIndex = randomIndex;
-            childObjects[currentIndex].SetActive(true);
-            childObjects[currentIndex].transform.position = new Vector2(xPos, -3.7f);
-        }
+        //    platforms[currentIndex].SetActive(false);
+        //    int randomIndex = Random.Range(0, childObjects.Length);
+        //    currentIndex = randomIndex;
+        //    childObjects[currentIndex].SetActive(true);
+        //    childObjects[currentIndex].transform.position = new Vector2(xPos, -3.7f);
+        //}
 
         // 발판이 카메라를 벗어났는지 확인하고 재배치합니다.
         for (int i = 0; i < count; i++)
         {
-            if (platforms[i].activeSelf && platforms[i].transform.position.x < Camera.main.transform.position.x - 15f)
-            {
+            
+            //플랫폼 배열의 활성화 되어있고 플랫폼 배열의 포지션 x의 값이 카메라 포지션의 - 45f 값 만큼 지나갔을때 발동
+            if (platforms[i].activeSelf && platforms[i].transform.position.x < Camera.main.transform.position.x - 45f)
+            {   //플랫폼 비활성화를 시키고
                 platforms[i].SetActive(false);
-
+                
+                // randomIndex의 범위 0~childObjects의 수 중 랜덤으로 할당
                 int randomIndex = Random.Range(0, childObjects.Length);
                 currentIndex = randomIndex;
-                childObjects[currentIndex].SetActive(true);
                 childObjects[currentIndex].transform.position = new Vector2(xPos, -3.7f);
+                childObjects[currentIndex].SetActive(true);
+               
             }
         }
     }

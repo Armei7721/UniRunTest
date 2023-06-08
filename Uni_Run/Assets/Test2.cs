@@ -1,11 +1,9 @@
 using UnityEngine;
 
-// 발판을 생성하고 주기적으로 재배치하는 스크립트
 public class Test2 : MonoBehaviour
 {
-    public GameObject[] prefabs; // 발판 프리팹들을 참조할 배열
-
-    public int count = 3; // 생성할 발판의 개수
+    public GameObject[] prefabs; // 프리팹을 담을 배열
+    private int count; // 생성할 발판의 개수
 
     public float timeBetSpawnMin = 1.25f;
     public float timeBetSpawnMax = 2.25f;
@@ -20,17 +18,16 @@ public class Test2 : MonoBehaviour
 
     void Start()
     {
-        platforms = new GameObject[count];
+        count = prefabs.Length;
+        platforms = new GameObject[count]; // platforms 배열 초기화
 
-        // 변수들을 초기화하고 사용할 발판들을 미리 생성합니다.
         for (int i = 0; i < count; i++)
         {
-            GameObject prefab = prefabs[i % prefabs.Length]; // 프리팹들을 루프하며 참조합니다.
-            platforms[i] = Instantiate(prefab, poolPosition, Quaternion.identity);
+            platforms[i] = Instantiate(prefabs[i], poolPosition, Quaternion.identity);
+            //platforms[i].SetActive(false); // 초기에 발판들을 비활성화 상태로 설정
         }
-
         lastSpawnTime = 0f;
-        timeBetSpawn = 0f;
+        timeBetSpawn = 3f;
     }
 
     void Update()
@@ -40,22 +37,34 @@ public class Test2 : MonoBehaviour
         {
             return;
         }
-        if (Time.time >= lastSpawnTime + timeBetSpawn)
+
+        //if (Time.time >= lastSpawnTime + timeBetSpawn)
+        //{
+        //    lastSpawnTime = Time.time;
+        //    platforms[currentIndex].SetActive(false);
+
+        //    int randomIndex = Random.Range(0, count);
+        //    currentIndex = randomIndex;
+        //    GameObject newPlatform = Instantiate(prefabs[currentIndex], new Vector2(xPos, -3.7f), Quaternion.identity);
+        //    platforms[currentIndex] = newPlatform;
+
+        //    xPos += 10f; // 발판 간격을 조정합니다.
+        //}
+
+        for (int i = 0; i < count; i++)
         {
-            lastSpawnTime = Time.time;
-
-            timeBetSpawn = Random.Range(timeBetSpawnMin, timeBetSpawnMax);
-
-            timeBetSpawn = 0;
-            platforms[currentIndex].SetActive(false);
-            platforms[currentIndex].SetActive(true);
-
-            platforms[currentIndex].transform.position = new Vector2(xPos, -3.9f);
-            currentIndex++;
-
-            if (currentIndex >= count)
+            Debug.Log(platforms[i].transform.position.x);
+            if (platforms[i].activeSelf && platforms[i].transform.position.x < Camera.main.transform.position.x - 23.5f)
             {
-                currentIndex = 0;
+                platforms[i].SetActive(false);
+
+                int randomIndex = Random.Range(0, count);
+                currentIndex = randomIndex;
+                GameObject newPlatform = Instantiate(prefabs[currentIndex], new Vector2(xPos, -3.7f), Quaternion.identity);
+                platforms[currentIndex] = newPlatform;
+                Debug.Log("Xpos의 값은");
+                Debug.Log(xPos);
+                
             }
         }
     }
