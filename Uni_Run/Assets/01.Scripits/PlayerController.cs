@@ -34,9 +34,11 @@ public class PlayerController : MonoBehaviour
 
     private float mtime = 0f;
     private bool iE = false;
+    private SpriteRenderer sprite;
     void Start()
     {
-        box = GetComponent <BoxCollider2D> ();
+        sprite = GetComponent<SpriteRenderer>();
+        box = GetComponent <BoxCollider2D>();
         capsule = GetComponent<CapsuleCollider2D>();
         // 게임 오브젝트로부터 사용할 컴포넌트들을 가져와 변수에 할당
         playerRigidbody = GetComponent<Rigidbody2D>();
@@ -120,7 +122,8 @@ public class PlayerController : MonoBehaviour
             // 사망 시 처리를 더 이상 진행하지 않고 종료
             return;
         }
-        if (Input.GetMouseButtonDown(0) && jumpCount < 2)
+
+        if (Input.GetMouseButtonDown(0) && jumpCount < 2 )
         {
             //점프 횟수 증가
             jumpCount++;
@@ -131,6 +134,7 @@ public class PlayerController : MonoBehaviour
             // 오디오 소스 재생
             playerAudio.Play();
         }
+
         else if (Input.GetMouseButtonUp(0) && playerRigidbody.velocity.y > 0)
         {
             // 마우스 왼쪽 버튼에서 손을 떼는 순간 && 속도의 y 값이 양수라면(위로 상승 중)
@@ -159,7 +163,6 @@ public class PlayerController : MonoBehaviour
     {
         if (hp < Hp.Length)
         {
-
             Hp[hp].SetActive(true);
             hp += 1;
         }
@@ -179,16 +182,24 @@ public class PlayerController : MonoBehaviour
         //게임 매니저의 게임오버 처리 실행
         GameManager.instance.OnPlayerDead();
     }
+    
     private void transparency()
     {
         if (iE == true)
         {
+            Time.timeScale = 0.7f;
             mtime += Time.deltaTime;
-            if (mtime >= 3f)
+            sprite.color = new Color(255f, 255f, 255f, 0.5f);
+            if (mtime >= 1.5f)
             {
-                iE = false;
-                mtime = 0f;
-                // 무적 상태 해제 후 필요한 처리 추가하기
+                Time.timeScale = 1f;
+                if (mtime >= 5f)
+                {
+                    sprite.color = new Color(255f, 255f, 255f, 1f);
+                    iE = false;
+                    mtime = 0f;
+                    // 무적 상태 해제 후 필요한 처리 추가하기
+                }
             }
         }
     }
