@@ -3,7 +3,7 @@ using UnityEngine;
 public class Traprespone : MonoBehaviour
 {
     public GameObject[] prefabs; // 방해물 프리팹 배열
-    public float spawnInterval = 2f; // 방해물 소환 간격
+    public float spawnInterval = 4f; // 방해물 소환 간격
 
     private float nextSpawnTime; // 다음 소환 시간
 
