@@ -8,7 +8,7 @@ public class ItemSpawner : MonoBehaviour
     private float cointime;
     private float Cointransform;
     public float itmetimer= 20f;
-    private float cointimer = 3;
+    private float cointimer = 2;
 
     private float yposMin = -1.15f;
     private float yposMax = 3.5f;
@@ -30,12 +30,13 @@ public class ItemSpawner : MonoBehaviour
             ScoreCoin.transform.position = new Vector2(23f, ypos);
             GameObject spawnedCoin = Instantiate(ScoreCoin, ScoreCoin.transform.position, Quaternion.identity);
             cointime = 0f;
+            Destroy(spawnedCoin, 5f);
         }
     }
     public void SpawnItem()
     {
         Itemtime += Time.deltaTime;
-        Debug.Log(Itemtime);
+        
         if (Itemtime > itmetimer)
         {
             float ypos = Random.Range(yposMin, yposMax);
@@ -47,6 +48,7 @@ public class ItemSpawner : MonoBehaviour
             // 아이템을 생성하고 위치 설정
             GameObject spawnedItem = Instantiate(itemPrefab, itemPrefab.transform.position, Quaternion.identity);
             Itemtime = 0f;
+            Destroy(spawnedItem, 5f);
         }
     }
 }

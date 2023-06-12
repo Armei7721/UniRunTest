@@ -10,7 +10,6 @@ public class BlinkText : MonoBehaviour
     private bool isActivated = false; // 오브젝트가 활성화되었는지 여부
     public GameObject[] warningObjects; // 게임 오브젝트를 저장할 배열
     public float blinkInterval = 0.5f;
-    public GameObject TWAxe;
     public bool isAxe= false;
 
     public int randomIndex;
@@ -55,12 +54,14 @@ public class BlinkText : MonoBehaviour
                 for (int i = 0; i < warningObjects.Length; i++)
                 {   
                     warningObjects[i].SetActive(false);
+
                     warningObjects[i].transform.position = new Vector3(-22f, warningObjects[i].transform.position.y, 0f);
                     if (i == randomIndex)
                     {
                         InstantiateAxe(warningObjects[i].transform.position);
                     }
                     timer = 0;
+                    warningObjects[i].transform.position = new Vector3(0f, warningObjects[i].transform.position.y, 0f);
                 }
                 isActivated = false;
                 isAxe = false;

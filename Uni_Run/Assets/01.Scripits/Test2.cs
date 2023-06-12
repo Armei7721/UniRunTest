@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class Test2 : MonoBehaviour
 {
     public GameObject[] Hp; // 켜거나 끌 자식 오브젝트
@@ -25,40 +24,47 @@ public class Test2 : MonoBehaviour
     private Rigidbody2D playerRigidbody; // 사용할 리지드바디 컴포넌트
     private Animator animator; // 사용할 애니메이터 컴포넌트
     private AudioSource playerAudio; // 사용할 오디오 소스 컴포넌트
-
+    
     private float t;
     private float duration = 10;
     // Start is called before the first frame update
     private CapsuleCollider2D capsule;
     private BoxCollider2D box;
-
+    
     private float mtime = 0f;
     private bool iE = false;
     void Start()
     {
-        
+
         box = GetComponent<BoxCollider2D>();
         capsule = GetComponent<CapsuleCollider2D>();
         // 게임 오브젝트로부터 사용할 컴포넌트들을 가져와 변수에 할당
         playerRigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         playerAudio = GetComponent<AudioSource>();
-        for (int i = 0; i < Hp.Length; i++)
-        {
-            Hp[i].SetActive(true);
-        }
-    }
-
+        //for (int i = 0; i < Hp.Length; i++)
+        //{
+        //    Hp[i].SetActive(true);
+        //}
+    }    
     // Update is called once per frame
     void Update()
     {
-
+        animator.SetBool("Grounded", isGrounded);
         Jump();
         Slide();
         Booster();
         Invincibility();
         transparency();
+        Check();
         mtime += Time.deltaTime;
+    }
+    private void Check()
+    {
+        if(playerRigidbody.velocity.y != 0)
+        {
+            isGrounded = false;
+        }
     }
     private void Booster()
     {
@@ -69,7 +75,6 @@ public class Test2 : MonoBehaviour
             {
                 isBoosted = false;
                 ScrollingObject.speed /= 2;
-
                 // 여기에 속도 원래 값으로 돌아갔을 때의 처리 등을 추가할 수 있습니다.
             }
         }
@@ -95,12 +100,12 @@ public class Test2 : MonoBehaviour
                     {
                         //t가 4.5f보다 커지면 최종 플레이어의 크기는 (1f,1f,1f)가 된다.
                         transform.localScale = new Vector3(1f, 1f, 1f);
-
+                        iE = true;
                         //Invincibility 함수를 발동하기 위해 다시 초기화
                         isIY = false;
                         MZTimer = 0;
                         t = 0f;
-                        iE = true;
+
                     }
 
                 }
@@ -109,7 +114,6 @@ public class Test2 : MonoBehaviour
             {   //Invincibility 함수를 발동하기 위해 다시 초기화
                 isIY = false;
                 t = 0f;
-                //아직 몰루?
                 MZTimer = MZDuration;
             }
         }
@@ -133,13 +137,12 @@ public class Test2 : MonoBehaviour
             // 오디오 소스 재생
             playerAudio.Play();
         }
-        else if (Input.GetMouseButtonUp(0) && playerRigidbody.velocity.y > 0)
+        else if (Input.GetMouseButtonUp(0) && playerRigidbody.velocity.y > 0 && isGrounded == false)
         {
             // 마우스 왼쪽 버튼에서 손을 떼는 순간 && 속도의 y 값이 양수라면(위로 상승 중)
             // 현재 속도를 절반으로 변경
             playerRigidbody.velocity = playerRigidbody.velocity * 0.5f;
         }
-        animator.SetBool("Grounded", isGrounded);
     }
     private void Slide()
     {
@@ -148,7 +151,6 @@ public class Test2 : MonoBehaviour
             animator.SetBool("Slide", true);
             capsule.enabled = false;
             box.enabled = true;
-
         }
         else if (Input.GetMouseButtonUp(1))
         {
@@ -163,7 +165,6 @@ public class Test2 : MonoBehaviour
         {
             hp += 1;
             Hp[hp].SetActive(true);
-            
         }
         else
         {
@@ -222,11 +223,11 @@ public class Test2 : MonoBehaviour
                 {
                     Die();
                 }
-
             }
             else if (isIY == true)
             {
-                other.gameObject.SetActive(false);
+                Destroy(other.gameObject);
+                GameManager.instance.AddScore(500);
             }
 
         }
@@ -237,9 +238,16 @@ public class Test2 : MonoBehaviour
         }
         else if (other.tag == "Mushroom" && !isDead)
         {   //isGrounded = false;
-            playerRigidbody.velocity = Vector2.zero; // 플레이어의 현재 속도를 제로로 설정
-            playerRigidbody.AddForce(new Vector2(0, jumpForce * 1.2f)); // 점프 힘을 주기 전에 플레이어의 속도를 복구하지 않고 힘을 주는 부분
-
+            if (isIY == true)
+            {
+                //other.gameObject.SetActive(false);
+                Destroy(other.gameObject);
+            }
+            else
+            {
+                playerRigidbody.velocity = Vector2.zero; // 플레이어의 현재 속도를 제로로 설정
+                playerRigidbody.AddForce(new Vector2(0, jumpForce * 1.2f)); // 점프 힘을 주기 전에 플레이어의 속도를 복구하지 않고 힘을 주는 부분
+            }
         }
         else if (other.tag == "Booster" && !isDead)
         {
@@ -274,5 +282,4 @@ public class Test2 : MonoBehaviour
             jumpCount = 0;
         }
     }
-    
 }

@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class PlayerController : MonoBehaviour
 {
     public GameObject[] Hp; // 켜거나 끌 자식 오브젝트
@@ -16,7 +15,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isIY; // 무적 아이템을 먹었는지 여부 확인
     private float MZDuration = 5f; //무적 지속 시간
-    private float MZTimer =0;// 무적 타이머
+    private float MZTimer = 0;// 무적 타이머
 
     private int jumpCount = 0; //누적 점프 횟수
     private bool isGrounded = false; // 바닥에 닿았는지 나타냄
@@ -27,18 +26,17 @@ public class PlayerController : MonoBehaviour
     private AudioSource playerAudio; // 사용할 오디오 소스 컴포넌트
 
     private float t;
-    private float duration =10;
+    private float duration = 10;
     // Start is called before the first frame update
     private CapsuleCollider2D capsule;
     private BoxCollider2D box;
 
     private float mtime = 0f;
     private bool iE = false;
-    private SpriteRenderer sprite;
     void Start()
     {
-        sprite = GetComponent<SpriteRenderer>();
-        box = GetComponent <BoxCollider2D>();
+
+        box = GetComponent<BoxCollider2D>();
         capsule = GetComponent<CapsuleCollider2D>();
         // 게임 오브젝트로부터 사용할 컴포넌트들을 가져와 변수에 할당
         playerRigidbody = GetComponent<Rigidbody2D>();
@@ -49,17 +47,24 @@ public class PlayerController : MonoBehaviour
             Hp[i].SetActive(true);
         }
     }
-
     // Update is called once per frame
     void Update()
     {
-        
+        animator.SetBool("Grounded", isGrounded);
         Jump();
         Slide();
         Booster();
         Invincibility();
         transparency();
+        Check();
         mtime += Time.deltaTime;
+    }
+    private void Check()
+    {
+        if (playerRigidbody.velocity.y != 0)
+        {
+            isGrounded = false;
+        }
     }
     private void Booster()
     {
@@ -70,7 +75,6 @@ public class PlayerController : MonoBehaviour
             {
                 isBoosted = false;
                 ScrollingObject.speed /= 2;
-
                 // 여기에 속도 원래 값으로 돌아갔을 때의 처리 등을 추가할 수 있습니다.
             }
         }
@@ -78,39 +82,38 @@ public class PlayerController : MonoBehaviour
     private void Invincibility()
     {   //isIY가 트루이면 발동
         if (isIY == true)
-        {   
+        {
             //MZTimer -Time.deltaTime이고
             MZTimer -= Time.deltaTime;
             //MZTimer가 0보다 작으면
             if (MZTimer <= 0f)
-            {   
+            {
                 if (t < 10f)
                 {   //t가 Time.deltaTime/duration 만큼 커진다.
-                    t += Time.deltaTime*4 / duration;
+                    t += Time.deltaTime * 4 / duration;
                     //t가 2.5f보다 작으면 true;
                     if (t < 2.5f)
                     {   // 트랜스폼 로컬 스케일의 크기를 Lerp함수를 사용해서 점진적으로 크키가 1의 크기에서 2의 크기까지 보간 비율(t*0.4f)로 커진다.
-                        transform.localScale = Vector3.Lerp(new Vector3(1f, 1f, 1f), new Vector3(2f, 2f, 1f), t );
+                        transform.localScale = Vector3.Lerp(new Vector3(1f, 1f, 1f), new Vector3(2f, 2f, 1f), t);
                     }
                     else if (t >= 7.5f)
                     {
                         //t가 4.5f보다 커지면 최종 플레이어의 크기는 (1f,1f,1f)가 된다.
                         transform.localScale = new Vector3(1f, 1f, 1f);
-
+                        iE = true;
                         //Invincibility 함수를 발동하기 위해 다시 초기화
                         isIY = false;
                         MZTimer = 0;
                         t = 0f;
-                        iE = true;
+
                     }
-                
+
                 }
             }
             else
             {   //Invincibility 함수를 발동하기 위해 다시 초기화
                 isIY = false;
                 t = 0f;
-                //아직 몰루?
                 MZTimer = MZDuration;
             }
         }
@@ -122,9 +125,9 @@ public class PlayerController : MonoBehaviour
             // 사망 시 처리를 더 이상 진행하지 않고 종료
             return;
         }
-
-        if (Input.GetMouseButtonDown(0) && jumpCount < 2 )
+        if (Input.GetMouseButtonDown(0) && jumpCount < 2)
         {
+            isGrounded = false;
             //점프 횟수 증가
             jumpCount++;
             // 점프 직전에 속도를 순간적으로 제로(0,0)로 변경
@@ -134,14 +137,12 @@ public class PlayerController : MonoBehaviour
             // 오디오 소스 재생
             playerAudio.Play();
         }
-
-        else if (Input.GetMouseButtonUp(0) && playerRigidbody.velocity.y > 0)
+        else if (Input.GetMouseButtonUp(0) && playerRigidbody.velocity.y > 0 && isGrounded == false)
         {
             // 마우스 왼쪽 버튼에서 손을 떼는 순간 && 속도의 y 값이 양수라면(위로 상승 중)
             // 현재 속도를 절반으로 변경
             playerRigidbody.velocity = playerRigidbody.velocity * 0.5f;
         }
-        animator.SetBool("Grounded", isGrounded);
     }
     private void Slide()
     {
@@ -150,7 +151,6 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("Slide", true);
             capsule.enabled = false;
             box.enabled = true;
-                
         }
         else if (Input.GetMouseButtonUp(1))
         {
@@ -163,8 +163,12 @@ public class PlayerController : MonoBehaviour
     {
         if (hp < Hp.Length)
         {
-            Hp[hp].SetActive(true);
             hp += 1;
+            Hp[hp].SetActive(true);
+        }
+        else
+        {
+            return;
         }
     }
     private void Die()
@@ -182,24 +186,16 @@ public class PlayerController : MonoBehaviour
         //게임 매니저의 게임오버 처리 실행
         GameManager.instance.OnPlayerDead();
     }
-    
     private void transparency()
     {
         if (iE == true)
         {
-            Time.timeScale = 0.7f;
             mtime += Time.deltaTime;
-            sprite.color = new Color(255f, 255f, 255f, 0.5f);
-            if (mtime >= 1.5f)
+            if (mtime >= 3f)
             {
-                Time.timeScale = 1f;
-                if (mtime >= 5f)
-                {
-                    sprite.color = new Color(255f, 255f, 255f, 1f);
-                    iE = false;
-                    mtime = 0f;
-                    // 무적 상태 해제 후 필요한 처리 추가하기
-                }
+                iE = false;
+                mtime = 0f;
+                // 무적 상태 해제 후 필요한 처리 추가하기
             }
         }
     }
@@ -216,7 +212,7 @@ public class PlayerController : MonoBehaviour
             other.gameObject.SetActive(false);
         }
         else if (other.tag == "Trap" && !isDead)
-        {   
+        {
             if (hp > 0 && isIY == false && iE == false)
             {
                 iE = true;
@@ -227,24 +223,31 @@ public class PlayerController : MonoBehaviour
                 {
                     Die();
                 }
-                
             }
             else if (isIY == true)
             {
-                other.gameObject.SetActive(false);
+                Destroy(other.gameObject);
+                GameManager.instance.AddScore(500);
             }
-            
+
         }
         else if (other.tag == "Score" && !isDead)
         {
             GameManager.instance.AddScore(100);
             other.gameObject.SetActive(false);
         }
-        else if (other.tag =="Mushroom" && !isDead)
-        {
-            playerRigidbody.velocity = Vector2.zero; // 플레이어의 현재 속도를 제로로 설정
-            playerRigidbody.AddForce(new Vector2(0, jumpForce*1.2f)); // 점프 힘을 주기 전에 플레이어의 속도를 복구하지 않고 힘을 주는 부분
-
+        else if (other.tag == "Mushroom" && !isDead)
+        {   isGrounded = false;
+            if (isIY == true)
+            {
+                //other.gameObject.SetActive(false);
+                Destroy(other.gameObject);
+            }
+            else
+            {
+                playerRigidbody.velocity = Vector2.zero; // 플레이어의 현재 속도를 제로로 설정
+                playerRigidbody.AddForce(new Vector2(0, jumpForce * 1.2f)); // 점프 힘을 주기 전에 플레이어의 속도를 복구하지 않고 힘을 주는 부분
+            }
         }
         else if (other.tag == "Booster" && !isDead)
         {
@@ -260,12 +263,12 @@ public class PlayerController : MonoBehaviour
         }
         else if (other.tag == "IY" && !isDead)
         {
-            if (isIY==false)
+            if (isIY == false)
             {
                 isIY = true;
                 Invincibility();
                 other.gameObject.SetActive(false);
-               
+
             }
         }
     }
@@ -278,10 +281,5 @@ public class PlayerController : MonoBehaviour
             isGrounded = true;
             jumpCount = 0;
         }
-    }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        //바닥에서 벗어났음을 감지하는 처리
-        isGrounded = false;
     }
 }

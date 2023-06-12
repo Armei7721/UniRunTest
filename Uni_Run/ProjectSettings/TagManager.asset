@@ -12,6 +12,7 @@ TagManager:
   - IY
   - Axe
   - Mushroom
+  - Grounded
   layers:
   - Default
   - TransparentFX
