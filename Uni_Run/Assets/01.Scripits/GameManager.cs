@@ -2,52 +2,63 @@
 using UnityEngine.SceneManagement;
 using TMPro;
 
-// 게임 오버 상태를 표현하고, 게임 점수와 UI를 관리하는 게임 매니저
-// 씬에는 단 하나의 게임 매니저만 존재할 수 있다.
-public class GameManager : MonoBehaviour {
-    public static GameManager instance; // 싱글톤을 할당할 전역 변수
+public class GameManager : MonoBehaviour
+{
+    public static GameManager instance;
 
-    public bool isGameover = false; // 게임 오버 상태
-    public TextMeshProUGUI scoreText; // 점수를 출력할 UI 텍스트
-    public GameObject gameoverUI; // 게임 오버시 활성화 할 UI 게임 오브젝트
+    public bool isGameover = false;
+    public TextMeshProUGUI scoreText;
+    public GameObject gameoverUI;
 
-    private int score = 0; // 게임 점수
+    public GameObject endingPrefab;
+    public GameObject trapOff;
+    public GameObject Player;
 
-    // 게임 시작과 동시에 싱글톤을 구성
-    void Awake() {
-        // 싱글톤 변수 instance가 비어있는가?
+    private int score = 0;
+
+    void Awake()
+    {
         if (instance == null)
         {
-            // instance가 비어있다면(null) 그곳에 자기 자신을 할당
             instance = this;
         }
         else
         {
-            // instance에 이미 다른 GameManager 오브젝트가 할당되어 있는 경우
-
-            // 씬에 두개 이상의 GameManager 오브젝트가 존재한다는 의미.
-            // 싱글톤 오브젝트는 하나만 존재해야 하므로 자신의 게임 오브젝트를 파괴
-            Debug.LogWarning("씬에 두개 이상의 게임 매니저가 존재합니다!");
+            Debug.LogWarning("씬에 두 개 이상의 게임 매니저가 존재합니다!");
             Destroy(gameObject);
         }
     }
 
-    void Update() {
-        // 게임 오버 상태에서 게임을 재시작할 수 있게 하는 처리
+    void Start()
+    {
+        trapOff = GameObject.Find("TrapSpawner");
+        Player = GameObject.Find("Player");
+        
+        PlayerController playerController = Player.GetComponent<PlayerController>();
+    }
+
+    void Update()
+    {
         if (isGameover && Input.GetMouseButtonDown(0))
         {
-
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
-        //Time.time이 100초를 넘기면 엔딩
-        else if (Time.time >= 100f)
+        else if (Time.time >= 5f)
         {
-            return;
+            
+            trapOff.SetActive(false);
+            transform.position = new Vector3(22f, 2f, 0f);
+            Instantiate(endingPrefab, transform.position, Quaternion.identity);
+            Time.timeScale = 0.5f;
+            PlayerController playerController = Player.GetComponent<PlayerController>();
+            playerController.enabled = false;
+
+
         }
     }
 
-    // 점수를 증가시키는 메서드
-    public void AddScore(int newScore) {
+    public void AddScore(int newScore)
+    {
         if (!isGameover)
         {
             score += newScore;
@@ -55,17 +66,17 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    // 플레이어 캐릭터가 사망시 게임 오버를 실행하는 메서드
-    public void OnPlayerDead() {
+    public void OnPlayerDead()
+    {
         isGameover = true;
         gameoverUI.SetActive(true);
-        
     }
 
     public void Exit()
     {
         Application.Quit();
     }
+
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
