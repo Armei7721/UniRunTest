@@ -13,6 +13,7 @@ TagManager:
   - Axe
   - Mushroom
   - Grounded
+  - ceiling
   layers:
   - Default
   - TransparentFX

@@ -39,6 +39,11 @@ public class GameManager : MonoBehaviour {
 
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+        //Time.time이 100초를 넘기면 엔딩
+        else if (Time.time >= 100f)
+        {
+            return;
+        }
     }
 
     // 점수를 증가시키는 메서드

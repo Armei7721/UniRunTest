@@ -65,6 +65,7 @@ public class BlinkText : MonoBehaviour
                 }
                 isActivated = false;
                 isAxe = false;
+                
             }
         }
     }
@@ -73,7 +74,7 @@ public class BlinkText : MonoBehaviour
         // 도끼 프리팹을 인스턴스화하여 날리기
         GameObject axe = Instantiate(axePrefab, position, Quaternion.identity);
         Rigidbody2D axeRigidbody = axe.GetComponent<Rigidbody2D>();
-
+        Destroy(axe, 6);
         // 도끼에 원하는 힘과 방향을 주어 날리기
         Vector3 axeForce = Vector3.right * 10f; // 예시로 오른쪽 방향으로 힘을 가함
         axeRigidbody.AddForce(axeForce, ForceMode2D.Impulse);

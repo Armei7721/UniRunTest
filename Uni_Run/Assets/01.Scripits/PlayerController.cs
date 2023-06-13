@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     private int jumpCount = 0; //누적 점프 횟수
     private bool isGrounded = false; // 바닥에 닿았는지 나타냄
     private bool isDead = false;//사망 상태
+    private bool isSlide = false;
 
     private Rigidbody2D playerRigidbody; // 사용할 리지드바디 컴포넌트
     private Animator animator; // 사용할 애니메이터 컴포넌트
@@ -35,7 +36,7 @@ public class PlayerController : MonoBehaviour
     private bool iE = false;
     void Start()
     {
-
+        
         box = GetComponent<BoxCollider2D>();
         capsule = GetComponent<CapsuleCollider2D>();
         // 게임 오브젝트로부터 사용할 컴포넌트들을 가져와 변수에 할당
@@ -51,6 +52,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         animator.SetBool("Grounded", isGrounded);
+        animator.SetBool("Slide", isSlide);
         Jump();
         Slide();
         Booster();
@@ -125,7 +127,7 @@ public class PlayerController : MonoBehaviour
             // 사망 시 처리를 더 이상 진행하지 않고 종료
             return;
         }
-        if (Input.GetMouseButtonDown(0) && jumpCount < 2)
+        if (Input.GetMouseButtonDown(0) && jumpCount < 2 && isSlide==false )
         {
             isGrounded = false;
             //점프 횟수 증가
@@ -148,13 +150,15 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
-            animator.SetBool("Slide", true);
+            isSlide = true;
+            animator.SetBool("Slide", isSlide);
             capsule.enabled = false;
             box.enabled = true;
         }
         else if (Input.GetMouseButtonUp(1))
         {
-            animator.SetBool("Slide", false);
+            isSlide = false;
+            animator.SetBool("Slide", isSlide);
             capsule.enabled = true;
             box.enabled = false;
         }
@@ -164,7 +168,10 @@ public class PlayerController : MonoBehaviour
         if (hp < Hp.Length)
         {
             hp += 1;
-            Hp[hp].SetActive(true);
+            if (Hp[hp] == false)
+            {
+                Hp[hp].SetActive(true);
+            }
         }
         else
         {
@@ -211,7 +218,7 @@ public class PlayerController : MonoBehaviour
             Recovery();
             other.gameObject.SetActive(false);
         }
-        else if (other.tag == "Trap" && !isDead)
+        else if (other.tag == "Axe" || other.tag == "Trap" && !isDead)
         {
             if (hp > 0 && isIY == false && iE == false)
             {
@@ -269,6 +276,20 @@ public class PlayerController : MonoBehaviour
                 Invincibility();
                 other.gameObject.SetActive(false);
 
+            }
+        }
+        else if (other.tag == "ceiling")
+        {
+            if (hp > 0 && isIY == false && iE == false)
+            {
+                iE = true;
+                mtime = 0f;
+                hp -= 1;
+                Hp[hp].SetActive(false);
+                if (hp == 0)
+                {
+                    Die();
+                }
             }
         }
     }
