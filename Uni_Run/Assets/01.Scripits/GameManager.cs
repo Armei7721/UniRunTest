@@ -5,16 +5,18 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-
     public bool isGameover = false;
+    public TextMeshProUGUI Distance;
     public TextMeshProUGUI scoreText;
     public GameObject gameoverUI;
 
     public GameObject endingPrefab;
     public GameObject trapOff;
-    public GameObject Player;
+    public GameObject player;
 
+    private int distance ;
     private int score = 0;
+    private bool hasInstantiatedEnding = false; // 엔딩을 이미 복사했는지 여부를 추적하는 변수
 
     void Awake()
     {
@@ -32,31 +34,34 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         trapOff = GameObject.Find("TrapSpawner");
-        Player = GameObject.Find("Player");
-        
-        PlayerController playerController = Player.GetComponent<PlayerController>();
+        player = GameObject.Find("Player");
+
+        PlayerController playerController = player.GetComponent<PlayerController>();
     }
 
     void Update()
     {
+        Arrival();
         if (isGameover && Input.GetMouseButtonDown(0))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
-        else if (Time.time >= 5f)
+        
+    }
+    public void Arrival()
+    {
+        distance = 100 - (int)Time.time;
+        Distance.text = "도착까지 : " + distance +"m";
+        if (!hasInstantiatedEnding && distance == 0)
         {
-            
+            distance = 0;
             trapOff.SetActive(false);
-            transform.position = new Vector3(22f, 2f, 0f);
+            transform.position = new Vector3(20f, 2f, 0f);
             Instantiate(endingPrefab, transform.position, Quaternion.identity);
             Time.timeScale = 0.5f;
-            PlayerController playerController = Player.GetComponent<PlayerController>();
-            playerController.enabled = false;
-
-
+            hasInstantiatedEnding = true;
         }
     }
-
     public void AddScore(int newScore)
     {
         if (!isGameover)
@@ -65,18 +70,15 @@ public class GameManager : MonoBehaviour
             scoreText.text = "Score : " + score;
         }
     }
-
     public void OnPlayerDead()
     {
         isGameover = true;
         gameoverUI.SetActive(true);
     }
-
     public void Exit()
     {
         Application.Quit();
     }
-
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);

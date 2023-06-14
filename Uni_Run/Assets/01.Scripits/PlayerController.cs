@@ -293,6 +293,13 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if(other.tag == "ending")
+        {
+
+        }
+    }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // 바닥에 닿았음을 감지하는 처리
