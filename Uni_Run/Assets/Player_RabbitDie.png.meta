@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 4d62aa87cf5ced44398f05d8db67a68b
+guid: 4d3b8503555559246a2c59b3c7f14524
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -117,7 +117,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Player_Rabbithit_0
+      name: Player_RabbitDie_0
       rect:
         serializedVersion: 2
         x: 0
@@ -131,14 +131,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 040e2b38bcc78c8459c67dd117901592
-      internalID: -718381277
+      spriteID: c8b7033d2a8b096429d71c7f314120df
+      internalID: -1821090889
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player_Rabbithit_1
+      name: Player_RabbitDie_1
       rect:
         serializedVersion: 2
         x: 320
@@ -152,14 +152,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cab353b0ba265964f9dbf7989c24a4f3
-      internalID: 1688367469
+      spriteID: 158adae85aeb8d44ea207741fa4e6bb3
+      internalID: -1746647727
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player_Rabbithit_2
+      name: Player_RabbitDie_2
       rect:
         serializedVersion: 2
         x: 640
@@ -173,8 +173,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d363c21083d8b1f41a9bd3329aeee8ba
-      internalID: 2057034549
+      spriteID: c80f971e2806e9d4e96187c1dd5089d5
+      internalID: 329323109
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Player_RabbitDie_3
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 0
+        width: 320
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7393da8d1fa19a24ba144d23b475c26b
+      internalID: -1684043058
       vertices: []
       indices: 
       edges: []
@@ -190,9 +211,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Player_Rabbithit_0: -718381277
-      Player_Rabbithit_1: 1688367469
-      Player_Rabbithit_2: 2057034549
+      Player_RabbitDie_0: -1821090889
+      Player_RabbitDie_1: -1746647727
+      Player_RabbitDie_2: 329323109
+      Player_RabbitDie_3: -1684043058
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

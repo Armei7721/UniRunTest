@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded = false; // 바닥에 닿았는지 나타냄
     private bool isDead = false;//사망 상태
     private bool isSlide = false;
+    private bool isHit = false;
 
     private Rigidbody2D playerRigidbody; // 사용할 리지드바디 컴포넌트
     private Animator animator; // 사용할 애니메이터 컴포넌트
@@ -178,6 +179,14 @@ public class PlayerController : MonoBehaviour
             return;
         }
     }
+    private void Hit()
+    {
+        isHit = true;
+        animator.SetBool("Hit", isHit);
+        iE = true;
+       
+
+    }
     private void Die()
     {
         //사망 처리
@@ -200,6 +209,12 @@ public class PlayerController : MonoBehaviour
             mtime += Time.deltaTime;
             if (mtime >= 3f)
             {
+                if(mtime >1.5f)
+                {
+                    isHit = false;
+                    animator.SetBool("Hit", isHit);
+
+                }
                 iE = false;
                 mtime = 0f;
                 // 무적 상태 해제 후 필요한 처리 추가하기
@@ -226,6 +241,7 @@ public class PlayerController : MonoBehaviour
                 mtime = 0f;
                 hp -= 1;
                 Hp[hp].SetActive(false);
+                Hit();
                 if (hp == 0)
                 {
                     Die();
@@ -310,4 +326,5 @@ public class PlayerController : MonoBehaviour
             jumpCount = 0;
         }
     }
+    
 }
