@@ -1,20 +1,25 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
-
+using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public bool isGameover = false;
+    public bool isEnding = false;
     public TextMeshProUGUI Distance;
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI EndingscoreText;
+    public Image endingImage;
     public GameObject gameoverUI;
 
     public GameObject endingPrefab;
     public GameObject trapOff;
     public GameObject player;
 
-    private int distance ;
+    private bool isPaused = false;
+    public int distance ;
+    public float timeReset;
     private int score = 0;
     private bool hasInstantiatedEnding = false; // 엔딩을 이미 복사했는지 여부를 추적하는 변수
 
@@ -33,6 +38,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        distance = 100;
         trapOff = GameObject.Find("TrapSpawner");
         player = GameObject.Find("Player");
 
@@ -42,25 +48,27 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         Arrival();
-        if (isGameover && Input.GetMouseButtonDown(0))
+        if((isGameover || isEnding) && Input.GetMouseButtonUp(0))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
-        
     }
     public void Arrival()
     {
-        distance = 100 - (int)Time.time;
+        timeReset += Time.deltaTime;
+        distance =(int)(100f -timeReset);
         Distance.text = "도착까지 : " + distance +"m";
-        if (!hasInstantiatedEnding && distance == 0)
+        
+        if (!hasInstantiatedEnding && distance <= 1)
         {
-            distance = 0;
             trapOff.SetActive(false);
             transform.position = new Vector3(20f, 2f, 0f);
             Instantiate(endingPrefab, transform.position, Quaternion.identity);
             Time.timeScale = 0.5f;
             hasInstantiatedEnding = true;
         }
+        
+        
     }
     public void AddScore(int newScore)
     {
@@ -70,17 +78,44 @@ public class GameManager : MonoBehaviour
             scoreText.text = "Score : " + score;
         }
     }
+
+    public void Stop()
+    {
+        if(isPaused== false)
+        {
+
+            Time.timeScale = 0;
+            isPaused = true;
+        }
+        
+    }
+    public void Go()
+    {
+        Time.timeScale = 1;
+        isPaused = false;
+    }
+ 
     public void OnPlayerDead()
     {
         isGameover = true;
         gameoverUI.SetActive(true);
     }
+    public void Ending()
+    {
+        EndingscoreText.text = "Score :" + score; 
+        isEnding = true;
+        endingImage.gameObject.SetActive(true);
+        Time.timeScale = 0;
+    }
+    
     public void Exit()
     {
         Application.Quit();
     }
     public void Restart()
     {
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Time.timeScale = 1;
     }
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
+    
     public GameObject[] Hp; // 켜거나 끌 자식 오브젝트
     public AudioClip deathClip; //사망시 재생할 오디오 클립
     public float jumpForce = 700f; //점프 힘
@@ -60,6 +61,7 @@ public class PlayerController : MonoBehaviour
         Invincibility();
         transparency();
         Check();
+        
         mtime += Time.deltaTime;
     }
     private void Check()
@@ -121,7 +123,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    private void Jump()
+    public void Jump()
     {
         if (isDead)
         {
@@ -147,7 +149,7 @@ public class PlayerController : MonoBehaviour
             playerRigidbody.velocity = playerRigidbody.velocity * 0.5f;
         }
     }
-    private void Slide()
+    public  void Slide()
     {
         if (Input.GetMouseButtonDown(1))
         {
@@ -168,11 +170,10 @@ public class PlayerController : MonoBehaviour
     {
         if (hp < Hp.Length)
         {
-            hp += 1;
-            if (Hp[hp] == false)
-            {
+           
+                hp += 1;
                 Hp[hp].SetActive(true);
-            }
+            
         }
         else
         {
@@ -181,10 +182,12 @@ public class PlayerController : MonoBehaviour
     }
     private void Hit()
     {
-        isHit = true;
-        animator.SetBool("Hit", isHit);
-        iE = true;
-       
+        if (!isDead)
+        {
+            isHit = true;
+            animator.SetBool("Hit", isHit);
+            iE = true;
+        }
 
     }
     private void Die()
@@ -207,18 +210,22 @@ public class PlayerController : MonoBehaviour
         if (iE == true)
         {
             mtime += Time.deltaTime;
-            if (mtime >= 3f)
-            {
-                if(mtime >1.5f)
+            GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.5f);
+                if (mtime >= 1.5f)
                 {
-                    isHit = false;
-                    animator.SetBool("Hit", isHit);
+                isHit = false;
+                animator.SetBool("Hit", isHit);
+                    if (mtime >= 3f)
+                    {
 
+                        iE = false;
+                        mtime = 0f;
+                        GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1f);
+                        // 무적 상태 해제 후 필요한 처리 추가하기
                 }
-                iE = false;
-                mtime = 0f;
-                // 무적 상태 해제 후 필요한 처리 추가하기
-            }
+                }
+                
+            
         }
     }
     private void OnTriggerEnter2D(Collider2D other)
@@ -241,11 +248,11 @@ public class PlayerController : MonoBehaviour
                 mtime = 0f;
                 hp -= 1;
                 Hp[hp].SetActive(false);
-                Hit();
                 if (hp == 0)
                 {
                     Die();
                 }
+                Hit();
             }
             else if (isIY == true)
             {
@@ -263,7 +270,7 @@ public class PlayerController : MonoBehaviour
         {   isGrounded = false;
             if (isIY == true)
             {
-                //other.gameObject.SetActive(false);
+                
                 Destroy(other.gameObject);
             }
             else
@@ -313,7 +320,7 @@ public class PlayerController : MonoBehaviour
     {
         if(other.tag == "ending")
         {
-
+            GameManager.instance.Ending();
         }
     }
     private void OnCollisionEnter2D(Collision2D collision)
