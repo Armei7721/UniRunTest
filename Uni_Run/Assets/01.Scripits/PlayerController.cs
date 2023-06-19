@@ -1,12 +1,11 @@
 using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
-    
     public GameObject[] Hp; // 켜거나 끌 자식 오브젝트
     public AudioClip deathClip; //사망시 재생할 오디오 클립
     public float jumpForce = 700f; //점프 힘
     public int hp = 3;
-
+    private Touch th;
     public float normalSpeed = 5f; // 원래 속도
     public float boostedSpeed = 10f; // 아이템을 먹었을 때의 증가된 속도
 
@@ -36,9 +35,10 @@ public class PlayerController : MonoBehaviour
 
     private float mtime = 0f;
     private bool iE = false;
+    private bool pubtn = false;
     void Start()
     {
-        
+
         box = GetComponent<BoxCollider2D>();
         capsule = GetComponent<CapsuleCollider2D>();
         // 게임 오브젝트로부터 사용할 컴포넌트들을 가져와 변수에 할당
@@ -53,6 +53,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(pubtn);
         animator.SetBool("Grounded", isGrounded);
         animator.SetBool("Slide", isSlide);
         Jump();
@@ -61,7 +62,7 @@ public class PlayerController : MonoBehaviour
         Invincibility();
         transparency();
         Check();
-        
+
         mtime += Time.deltaTime;
     }
     private void Check()
@@ -123,6 +124,16 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    public void staybtn()
+    {
+        pubtn = true;
+
+    }
+    public void upbtn()
+    {
+        pubtn = false;
+
+    }
     public void Jump()
     {
         if (isDead)
@@ -130,17 +141,22 @@ public class PlayerController : MonoBehaviour
             // 사망 시 처리를 더 이상 진행하지 않고 종료
             return;
         }
-        if (Input.GetMouseButtonDown(0) && jumpCount < 2 && isSlide==false )
+
+        if (Input.GetMouseButtonDown(0) && jumpCount < 2 && isSlide == false)
         {
-            isGrounded = false;
-            //점프 횟수 증가
-            jumpCount++;
-            // 점프 직전에 속도를 순간적으로 제로(0,0)로 변경
-            playerRigidbody.velocity = Vector2.zero;
-            // 리지드바디에 위쪽으로 힘 주기
-            playerRigidbody.AddForce(new Vector2(0, jumpForce));
-            // 오디오 소스 재생
-            playerAudio.Play();
+
+            if (pubtn == false)
+            {
+                isGrounded = false;
+                //점프 횟수 증가
+                jumpCount++;
+                // 점프 직전에 속도를 순간적으로 제로(0,0)로 변경
+                playerRigidbody.velocity = Vector2.zero;
+                // 리지드바디에 위쪽으로 힘 주기
+                playerRigidbody.AddForce(new Vector2(0, jumpForce));
+                // 오디오 소스 재생
+                playerAudio.Play();
+            }
         }
         else if (Input.GetMouseButtonUp(0) && playerRigidbody.velocity.y > 0 && isGrounded == false)
         {
@@ -149,16 +165,17 @@ public class PlayerController : MonoBehaviour
             playerRigidbody.velocity = playerRigidbody.velocity * 0.5f;
         }
     }
-    public  void Slide()
+
+    public void Slide()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (pubtn == true)
         {
             isSlide = true;
             animator.SetBool("Slide", isSlide);
             capsule.enabled = false;
             box.enabled = true;
         }
-        else if (Input.GetMouseButtonUp(1))
+        if (pubtn == false)
         {
             isSlide = false;
             animator.SetBool("Slide", isSlide);
@@ -170,10 +187,11 @@ public class PlayerController : MonoBehaviour
     {
         if (hp < Hp.Length)
         {
-           
+            if (Hp[hp] == false)
+            {
                 hp += 1;
                 Hp[hp].SetActive(true);
-            
+            }
         }
         else
         {
@@ -182,12 +200,10 @@ public class PlayerController : MonoBehaviour
     }
     private void Hit()
     {
-        if (!isDead)
-        {
-            isHit = true;
-            animator.SetBool("Hit", isHit);
-            iE = true;
-        }
+        isHit = true;
+        animator.SetBool("Hit", isHit);
+        iE = true;
+
 
     }
     private void Die()
@@ -211,21 +227,21 @@ public class PlayerController : MonoBehaviour
         {
             mtime += Time.deltaTime;
             GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.5f);
-                if (mtime >= 1.5f)
-                {
+            if (mtime >= 1.5f)
+            {
                 isHit = false;
                 animator.SetBool("Hit", isHit);
-                    if (mtime >= 3f)
-                    {
+                if (mtime >= 3f)
+                {
 
-                        iE = false;
-                        mtime = 0f;
-                        GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1f);
-                        // 무적 상태 해제 후 필요한 처리 추가하기
+                    iE = false;
+                    mtime = 0f;
+                    GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1f);
+                    // 무적 상태 해제 후 필요한 처리 추가하기
                 }
-                }
-                
-            
+            }
+
+
         }
     }
     private void OnTriggerEnter2D(Collider2D other)
@@ -248,11 +264,11 @@ public class PlayerController : MonoBehaviour
                 mtime = 0f;
                 hp -= 1;
                 Hp[hp].SetActive(false);
+                Hit();
                 if (hp == 0)
                 {
                     Die();
                 }
-                Hit();
             }
             else if (isIY == true)
             {
@@ -267,10 +283,11 @@ public class PlayerController : MonoBehaviour
             other.gameObject.SetActive(false);
         }
         else if (other.tag == "Mushroom" && !isDead)
-        {   isGrounded = false;
+        {
+            isGrounded = false;
             if (isIY == true)
             {
-                
+                //other.gameObject.SetActive(false);
                 Destroy(other.gameObject);
             }
             else
@@ -318,9 +335,9 @@ public class PlayerController : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        if(other.tag == "ending")
+        if (other.tag == "ending")
         {
-            GameManager.instance.Ending();
+
         }
     }
     private void OnCollisionEnter2D(Collision2D collision)
@@ -333,5 +350,5 @@ public class PlayerController : MonoBehaviour
             jumpCount = 0;
         }
     }
-    
+
 }

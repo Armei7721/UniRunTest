@@ -97,6 +97,7 @@ public class GameManager : MonoBehaviour
  
     public void OnPlayerDead()
     {
+
         isGameover = true;
         gameoverUI.SetActive(true);
     }
