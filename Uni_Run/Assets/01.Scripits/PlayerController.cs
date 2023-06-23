@@ -36,9 +36,10 @@ public class PlayerController : MonoBehaviour
     private float mtime = 0f;
     private bool iE = false;
     private bool pubtn = false;
+    private bool jubtn = false;
     void Start()
     {
-
+        
         box = GetComponent<BoxCollider2D>();
         capsule = GetComponent<CapsuleCollider2D>();
         // 게임 오브젝트로부터 사용할 컴포넌트들을 가져와 변수에 할당
@@ -124,6 +125,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    
     public void staybtn()
     {
         pubtn = true;
@@ -142,7 +144,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (Input.GetMouseButtonDown(0) && jumpCount < 2 && isSlide == false)
+        if (Input.GetMouseButtonUp(0) && jumpCount < 2 && isSlide == false)
         {
 
             if (pubtn == false)
@@ -348,6 +350,7 @@ public class PlayerController : MonoBehaviour
             //isGround를 true로 변경하고, 누적 점프 횟수를 0으로 리셋
             isGrounded = true;
             jumpCount = 0;
+            jubtn = false;
         }
     }
 
